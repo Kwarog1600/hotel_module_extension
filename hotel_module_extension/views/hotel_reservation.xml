@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_hotel_reservation_form_inherit" model="ir.ui.view">
+        <field name="name">hotel.reservation.form.inherit</field>
+        <field name="model">hotel.reservation</field>
+        <field name="inherit_id" ref="hotel_reservation.view_hotel_reservation_form"/>
+        <field name="arch" type="xml">
+                <xpath expr="//form/header" position="inside">
+                    <button
+                    name="action_checkin"
+                    type="object"
+                    string="Check In"
+                    states="confirm"
+                    class="oe_highlight"
+                    />
+
+                    <button
+                    name="action_checkout"
+                    type="object"
+                    string="Check In"
+                    states="checkedin"
+                    class="oe_highlight"
+                    />
+
+                </xpath>
+        </field>
+    </record>
+
+    <record id="kanban_hotel_room_reservation" model="ir.ui.view">
+        <field name="name">hotel_room_reservation.view.kanban</field>
+        <field name="model">hotel.room</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="room_categ_id">
+                <field name="name"/>
+                <field name="status"/>
+                <field name="color"/>
+                <field name="lst_price"/>
+                <field name="id"/>
+                <field name="code"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_color_#{kanban_getcolor(record.color.raw_value)} oe_kanban_card oe_kanban_global_click">
+                            <div class="o_dropdown_kanban dropdown" groups="base.group_user">
+                                <a role="button" class="dropdown-toggle btn" data-toggle="dropdown" href="#">
+                                    <span title="fa_icon" class="fa fa-bars fa-lg"/>
+                                </a>
+                                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                    <t t-if="widget.editable">
+                                        <li>
+                                            <a type="edit">Edit</a>
+                                        </li>
+                                    </t>
+                                    <t t-if="widget.deletable">
+                                        <li>
+                                            <a type="delete">Delete</a>
+                                        </li>
+                                    </t>
+                                    <li>
+                                        <ul class="oe_kanban_colorpicker" data-field="color"/>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="oe_kanban_details" style="margin-top: -5px;">
+                                <div class="oe_kanban_content">
+                                    <div class="oe_kanban_project_list">
+                                        <H3>
+                                            <a type="open">
+                                                <img alt="room_image" t-att-src="kanban_image('hotel.room', 'image_medium', record.id.value)" style="height:70px;width:70px" class="oe_avatar oe_kanban_avatar_smallbox"/>
+                                                <t t-if="record.code.raw_value" style="margin-right: 10px">
+                                                    [
+                                                    <field name="code"/>
+                                                    ]
+                                                </t>
+                                                <field name="name"/>
+                                            </a>
+                                        </H3>
+                                    </div>
+                                    <div name="tags"/>
+                                    <ul>
+                                        <li>
+                                            Status:
+                                            <field name="status"/>
+                                        </li>
+                                        <li>
+                                            Rate:
+                                            <field name="lst_price"/>
+                                        </li>
+                                        <li>
+                                            Capacity:
+                                            <field name="capacity"/>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="oe_kanban_bottom_right">
+                                    <a t-if="record.status.raw_value === 'available'" type="object" string="Available" name="set_room_status_occupied" class="oe_kanban_status oe_kanban_status_green ">
+                                    </a>
+                                    <a t-if="record.status.raw_value === 'occupied'" type="object" string="occupied" name="set_room_status_available" class="oe_kanban_status oe_kanban_status_red ">
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="oe_clear"/>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!--Form for List of Reservations for Room-->
+    <record id="form_hotel_room_reservation" model="ir.ui.view">
+        <field name="name">room_reservations.view.form</field>
+        <field name="model">hotel.room</field>
+        <field name="arch" type="xml">
+            <form string="">
+                <sheet>
+                  <group>
+                    <div class="oe_title">
+                        <label for="name" string="Name" />
+                        <h1>
+                            <field name="name" />
+                        </h1>
+                        <label for="status" string="Status" />
+                        <h2>
+                            <field name="status" readonly="1" />
+                        </h2>
+                        <h2>
+                            <field name="isroom" />
+                        </h2>
+                    </div>
+                  </group>
+                  <group>
+                    <div class="calendar_table">
+                        <h1>Schedule</h1>
+                    </div>
+                    <div class="table-container" style="display: grid; grid-template-columns: repeat(7, 120px); grid-gap: 1px;">
+                        <!-- Here you can use <t> or <div> elements to represent your cells -->
+                        <div class="table-cell header-cell" style="font-weight: bold; background-color: #f0f0f0; border: 1px solid #ddd;">Sunday</div>
+                        <div class="table-cell header-cell" style="font-weight: bold; background-color: #f0f0f0; border: 1px solid #ddd;">Monday</div>
+                        <div class="table-cell header-cell" style="font-weight: bold; background-color: #f0f0f0; border: 1px solid #ddd;">Tuesday</div>
+                        <div class="table-cell header-cell" style="font-weight: bold; background-color: #f0f0f0; border: 1px solid #ddd;">Wednesday</div>
+                        <div class="table-cell header-cell" style="font-weight: bold; background-color: #f0f0f0; border: 1px solid #ddd;">Thursday</div>
+                        <div class="table-cell header-cell" style="font-weight: bold; background-color: #f0f0f0; border: 1px solid #ddd;">Friday</div>
+                        <div class="table-cell header-cell" style="font-weight: bold; background-color: #f0f0f0; border: 1px solid #ddd;">Saturday</div>
+                        <!-- Data Rows -->
+                        <t t-foreach="record.room_reservation_line_ids" t-as="reservation">
+                            <!-- Format and display check_in and check_out -->
+                            <div class="table-cell" style="width: 120px; height: 40px; border: 1px solid #ddd; box-sizing: border-box;">
+                                <div><t t-esc="reservation.check_in.strftime('%d-%b %H:%M')"/></div>
+                                <div><t t-esc="reservation.check_out.strftime('%d-%b %H:%M')"/></div>
+                            </div>
+                        </t>
+                    </div>
+                  </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+     <!-- Action Definition -->
+    <record id="action_hotel_room_reservation_kanban" model="ir.actions.act_window">
+        <field name="name">Hotel Rooms</field>
+        <field name="res_model">hotel.room</field>
+        <field name="view_mode">kanban,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+                    (0, 0, {'view_mode': 'kanban', 'view_id': ref('kanban_hotel_room_reservation')}),
+                    (0, 0, {'view_mode': 'form', 'view_id': ref('form_hotel_room_reservation')})]"/>
+        <field name="target">current</field>
+    </record>
+
+    <menuitem
+        id="menu_hotel_room_reservation"
+        name="Room Reservation"
+        action="action_hotel_room_reservation_kanban"
+        parent="hotel_reservation.menu_hotel_reservation"
+        sequence="70"/>
+</odoo>

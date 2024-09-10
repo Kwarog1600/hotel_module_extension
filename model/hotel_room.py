@@ -31,7 +31,7 @@ class HotelReservationSummaryExt(models.Model):
         }
 
     @api.onchange("date_from", "date_to")  # noqa C901 (function is too complex)
-    def get_room_summary(self):  # noqa C901 (function is too complex)
+    def get_room_summary_per_room(self,room_id):  # noqa C901 (function is too complex)
         """
         @param self: object pointer
         """
@@ -73,7 +73,7 @@ class HotelReservationSummaryExt(models.Model):
                 date_range_list.append(temp_date.strftime(dt))
                 temp_date = temp_date + timedelta(days=1)
             all_detail.append(summary_header_list)
-            room_ids = room_obj.search([])
+            room_ids = room_obj.search([('id','=',room_id)])
             all_room_detail = []
             for room in room_ids:
                 room_detail = {}
